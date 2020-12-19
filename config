@@ -1,0 +1,4 @@
+WORK_DIR=/work
+DEPLOY_DIR=/deploy
+USE_QEMU=0
+IMG_NAME=Raspbian
