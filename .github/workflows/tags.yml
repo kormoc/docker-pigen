@@ -1,8 +1,9 @@
-name: publish kormoc/pigen:latest
+name: publish kormoc/pigen:$TAG
 
 on:
   push:
-    branches: main
+    branches:
+      - 'refs/tags/*'
 
 jobs:
   build:
@@ -10,6 +11,9 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v2
+      - name: Get the tag
+        id: get_tag
+        run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
       - name: install buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -18,4 +22,6 @@ jobs:
       - name: login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: build the image
-        run: docker buildx build --push --tag kormoc/pigen:latest --platform linux/arm/v7 .
+        run: docker buildx build --push --tag kormoc/pigen:$TAG --platform linux/amd64,linux/arm64,linux/arm/v7 .
+        env:
+          TAG: ${{ steps.get_tag.outputs.TAG }}
