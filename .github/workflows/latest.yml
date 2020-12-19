@@ -15,12 +15,12 @@ jobs:
       - name: Login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Build
-        run: docker buildx build --memory="1536m" --push --tag kormoc/pigen:latest --platform linux/amd64,linux/arm64,linux/arm/v7 .
+        run: docker buildx build --memory="1536m" --load --tag kormoc/pigen:raw --platform linux/amd64,linux/arm64,linux/arm/v7 .
       - name: Install docker-squash
         uses: teddyking/dependency-action@master
         with:
           deps: https://github.com/jwilder/docker-squash/releases/download/v0.2.0/docker-squash-linux-amd64-v0.2.0.tar.gz
-      - name: list files ~
-        run: find ~
-      - name: list files cwd
-        run: find .
+      - name: Squash the images
+        run: docker save kormoc/pigen:raw | sudo /home/runner/work/_temp/_github_home/docker-squash -from root -t kormoc/pigen:latest | docker load
+      - name: Push the images
+        run: docker image push kormoc/pigen:latest
