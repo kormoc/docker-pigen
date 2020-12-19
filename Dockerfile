@@ -4,16 +4,17 @@ LABEL maintainer="Rob Smith <kormoc@gmail.com>"
 
 ARG pigen_tag=2020-12-02-raspbian-buster
 
-RUN apt-get update
-RUN apt-get install -y git
+RUN apt-get --quiet --quiet update
+RUN apt-get --quiet --quiet install --assume-yes git
 RUN mkdir /pi-gen /deploy /work
 RUN git clone https://github.com/RPi-Distro/pi-gen.git /pi-gen
 RUN cd /pi-gen && git checkout tags/${pigen_tag}
 
-RUN for PKG in $(awk -F: '{ print $NF }' /pi-gen/depends); do apt-get --quiet --quiet install --assume-yes "${PKG}" || true; done
-
-# provides xxd in 16.04
-RUN apt-get install -y vim-common
+RUN awk -F: '{ print $NF }' /pi-gen/depends > /tmp/requirements
+# In Ubuntu 16.04, xxd is provided in the vim-common package
+RUN sed -i'' 's/xxd/vim-common/g' /tmp/requirements
+RUN sed -i'' 's/\n/ /g' /tmp/requirements
+RUN apt-get --quiet --quiet install --assume-yes $(cat /tmp/requirements)
 
 # Fix requiring binfmt_misc on native arm
 COPY dependencies_check.patch /pi-gen/scripts
