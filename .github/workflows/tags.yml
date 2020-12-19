@@ -2,8 +2,8 @@ name: publish kormoc/pigen:$TAG
 
 on:
   push:
-    branches:
-      - 'refs/tags/*'
+    tags:
+      - '*'
 
 jobs:
   build:
