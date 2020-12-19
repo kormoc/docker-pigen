@@ -20,5 +20,7 @@ jobs:
         uses: teddyking/dependency-action@master
         with:
           deps: https://github.com/jwilder/docker-squash/releases/download/v0.2.0/docker-squash-linux-amd64-v0.2.0.tar.gz
-      - name: list files
-        run: find /github/home
+      - name: list files ~
+        run: find ~
+      - name: list files cwd
+        run: find .
