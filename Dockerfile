@@ -17,8 +17,8 @@ RUN sed -i'' 's/\n/ /g' /tmp/requirements
 RUN apt-get --quiet --quiet install --assume-yes --no-install-recommends $(cat /tmp/requirements) > /dev/null
 
 # Fix requiring binfmt_misc on native arm
-COPY patches/423.patch /tmp/patches/423.patch
-RUN cd /pi-gen && patch -p1 < /tmp/patches/423.patch
+COPY patches/484.patch /tmp/patches/484.patch
+RUN cd /pi-gen && patch -p1 < /tmp/patches/484.patch
 
 COPY config /pi-gen/config
 RUN touch /config
