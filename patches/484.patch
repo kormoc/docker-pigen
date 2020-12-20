@@ -1,0 +1,48 @@
+From cc78b4c81992515bbe15e6bc69f14addde3e29f6 Mon Sep 17 00:00:00 2001
+From: Rob Smith <kormoc@gmail.com>
+Date: Sat, 19 Dec 2020 18:34:20 -0800
+Subject: [PATCH] Don't check for binfmt_misc on arm platforms
+
+When building on a native ARM platform, binfmt_misc is not
+required to be loaded. This change checks the machine type
+and if it's a ARM platform, skip the binfmt_misc validation.
+---
+ scripts/dependencies_check | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/scripts/dependencies_check b/scripts/dependencies_check
+index 375512b75..32c42eff9 100644
+--- a/scripts/dependencies_check
++++ b/scripts/dependencies_check
+@@ -28,11 +28,26 @@ dependencies_check()
+ 		false
+ 	fi
+ 
++    # If we're building on a native arm platform, we don't need to check for
++    # binfmt_misc or require it to be loaded.
+ 
+-	if ! grep -q "/proc/sys/fs/binfmt_misc" /proc/mounts; then
+-		echo "Module binfmt_misc not loaded in host"
+-		echo "Please run:"
+-		echo "  sudo modprobe binfmt_misc"
+-		exit 1
++	binfmt_misc_required=1
++
++	case $(uname -m) in
++		aarch64)
++			binfmt_misc_required=0
++			;;
++		arm*)
++			binfmt_misc_required=0
++			;;
++	esac
++
++	if [[ "${binfmt_misc_required}" == "1" ]]; then
++		if ! grep -q "/proc/sys/fs/binfmt_misc" /proc/mounts; then
++			echo "Module binfmt_misc not loaded in host"
++			echo "Please run:"
++			echo "  sudo modprobe binfmt_misc"
++			exit 1
++		fi
+ 	fi
+ }
