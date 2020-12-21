@@ -13,17 +13,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: what ref
-        run: echo ${GITHUB_REF}
-      - name: Figure out what tag to push
-        run: bash scripts/figure_out_docker_tag.sh
       - name: What tag to push?
         id: tag
-        run: echo ::set-output name=TAG::$(bash scripts/figure_out_docker_tag.sh)
+        run: scripts/figure_out_docker_tag.sh
       - name: test
-        run: echo ${TAG}
+        run: echo "$TAG"
         env:
-          TAG: ${{ steps.tag.outputs.TAG }}
+          TAG: ${{ steps.tag.outputs }}
       - name: Where am I?
         run: pwd
       - name: What's here?
