@@ -2,20 +2,26 @@ name: publish kormoc/pigen:latest
 
 on:
   push:
-    branches: main
+    branches:
+      - 'main'
+    tags:
+      - '*'
 
 jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Figure out what tag to push
-        run: echo ${GITHUB_REF}
+        run: bash scripts/figure_out_docker_tag.sh
+      - name: What tag to push?
+        id: tag
+        run: echo ::set-output name=TAG::$(bash scripts/figure_out_docker_tag.sh)
       - name: Where am I?
         run: pwd
       - name: What's here?
         run: ls -la
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Set up buildx
         uses: crazy-max/ghaction-docker-buildx@v1
       - name: Login to docker hub
