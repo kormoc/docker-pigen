@@ -17,13 +17,9 @@ jobs:
         id: tag
         run: scripts/figure_out_docker_tag.sh
       - name: test
-        run: echo "$TAG"
+        run: echo ${TAG}
         env:
-          TAG: ${{ steps.tag.outputs }}
-      - name: Where am I?
-        run: pwd
-      - name: What's here?
-        run: ls -la
+          TAG: ${{ steps.tag.outputs.TAG }}
       - name: Set up buildx
         uses: crazy-max/ghaction-docker-buildx@v1
       - name: Login to docker hub
