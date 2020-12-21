@@ -20,6 +20,10 @@ jobs:
       - name: What tag to push?
         id: tag
         run: echo ::set-output name=TAG::$(bash scripts/figure_out_docker_tag.sh)
+      - name: test
+        run: echo ${TAG}
+        env:
+          TAG: ${{ steps.get_tag.outputs.TAG }}
       - name: Where am I?
         run: pwd
       - name: What's here?
