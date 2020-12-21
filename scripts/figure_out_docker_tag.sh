@@ -7,4 +7,4 @@ case "${GITHUB_REF}" in
     *)
         echo "::set-output name=TAG::${GITHUB_REF}"
         ;;
-done
+esac
