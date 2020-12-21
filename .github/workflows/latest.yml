@@ -23,7 +23,7 @@ jobs:
       - name: test
         run: echo ${TAG}
         env:
-          TAG: ${{ steps.get_tag.outputs.TAG }}
+          TAG: ${{ steps.tag.outputs.TAG }}
       - name: Where am I?
         run: pwd
       - name: What's here?
