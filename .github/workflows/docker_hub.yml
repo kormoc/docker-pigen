@@ -1,7 +1,11 @@
-name: publish kormoc/pigen:$TAG
+name: publish kormoc/pigen
 
 on:
   push:
+
+    branches:
+      - 'main'
+
     tags:
       - '*'
 
@@ -9,15 +13,20 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
+
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get the tag
-        id: get_tag
-        run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+
+      - name: What tag to push?
+        id: tag
+        run: scripts/figure_out_docker_tag.sh
+
       - name: Set up buildx
         uses: crazy-max/ghaction-docker-buildx@v1
+
       - name: Login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Build
         run: docker buildx build --memory="1536m" --push --tag kormoc/pigen:$TAG --platform linux/amd64,linux/arm64,linux/arm/v7 .
         env:
